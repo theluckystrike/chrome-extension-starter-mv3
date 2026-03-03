@@ -1,13 +1,6 @@
 // Chrome Extension Storage Utility
 // Type-safe wrapper around chrome.storage API
 
-interface StorageArea {
-    get(keys: string | string[] | null): Promise<Record<string, unknown>>;
-    set(items: Record<string, unknown>): Promise<void>;
-    remove(keys: string | string[]): Promise<void>;
-    clear(): Promise<void>;
-}
-
 type StorageType = 'local' | 'sync' | 'session';
 
 export class Storage {
