@@ -1,70 +1,36 @@
-# Chrome Extension Starter Template — Manifest V3
+# Chrome Extension Starter -- Manifest V3
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI](https://github.com/theluckystrike/chrome-extension-starter-mv3/actions/workflows/ci.yml/badge.svg)](https://github.com/theluckystrike/chrome-extension-starter-mv3/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
 [![MV3](https://img.shields.io/badge/Manifest-V3-green.svg)](https://developer.chrome.com/docs/extensions/mv3/)
 
-> **Built by [Zovo](https://zovo.one)** — makers of 18+ production Chrome extensions including [Tab Suspender Pro](https://chrome.google.com/webstore/detail/tab-suspender-pro), [JSON Formatter Pro](https://chrome.google.com/webstore/detail/json-formatter-pro), and [Cookie Manager Pro](https://chrome.google.com/webstore/detail/cookie-manager-pro).
+Production-ready Chrome Extension template with TypeScript, React 18, Tailwind CSS, Webpack 5, and Manifest V3. Includes type-safe message passing, a `chrome.storage` wrapper, Jest testing, ESLint + Prettier, and GitHub Actions CI.
 
-The **fastest way to build a production-ready Chrome extension** with TypeScript, React, and Tailwind CSS on Manifest V3. Skip the boilerplate and start shipping.
-
-## ✨ What's Included
-
-| Feature | Details |
-|---------|---------|
-| 🔷 **TypeScript** | Full type safety with strict mode |
-| ⚛️ **React 18** | Modern UI components with hooks |
-| 🎨 **Tailwind CSS** | Utility-first styling, zero config |
-| 📦 **Webpack 5** | Optimized bundling with HMR |
-| 🔐 **Manifest V3** | Service worker, declarativeNetRequest ready |
-| 💬 **Message Passing** | Type-safe messaging between contexts |
-| 💾 **Storage Wrapper** | Generic get/set with `chrome.storage` |
-| 🧪 **Jest + Testing** | Unit testing with JSDOM |
-| 🔍 **ESLint + Prettier** | Code quality and formatting |
-| 🚀 **CI/CD** | GitHub Actions for test + build |
-| 📝 **Store Templates** | Listing and privacy policy templates |
-
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-# Clone this template
 git clone https://github.com/theluckystrike/chrome-extension-starter-mv3.git my-extension
 cd my-extension
-
-# Install dependencies
 npm install
-
-# Start development (with file watching)
 npm run dev
-
-# Load in Chrome:
-# 1. Open chrome://extensions
-# 2. Enable "Developer Mode"
-# 3. Click "Load unpacked"
-# 4. Select the dist/ folder
 ```
 
-## 📁 Project Structure
+Then load in Chrome: open `chrome://extensions`, enable Developer Mode, click "Load unpacked", and select the `dist/` folder.
+
+## Project Structure
 
 ```
 src/
-├── background/          # Service worker (MV3)
-│   └── index.ts
-├── content/             # Content scripts (injected into pages)
-│   └── index.ts
-├── popup/               # Extension popup UI
-│   ├── App.tsx
-│   └── components/
-├── options/             # Options/settings page
-├── lib/                 # Shared utilities
-│   ├── storage.ts       # Chrome storage wrapper
-│   ├── messaging.ts     # Type-safe message passing
-│   └── types.ts         # Shared TypeScript types
-└── onboarding/          # Welcome page for new users
+  background/index.ts     Service worker (MV3 entry point)
+  content/index.ts        Content script injected into pages
+  lib/
+    messaging.ts          Type-safe message passing (sendMessage, onMessage)
+    storage.ts            chrome.storage wrapper (local, sync, session)
+    types.ts              Shared TypeScript interfaces
 ```
 
-## 🛠 Development Commands
+## Commands
 
 | Command | Description |
 |---------|-------------|
@@ -76,53 +42,47 @@ src/
 | `npm run format` | Prettier format |
 | `npm run type-check` | TypeScript type check |
 
-## 💾 Storage API
+## Customization
+
+1. **Update `manifest.json`** -- Set your extension name, description, icons, and permissions.
+2. **Add popup UI** -- Create React components in `src/popup/`. Webpack builds `popup.html` automatically.
+3. **Add options page** -- Create `src/options/` with your settings UI.
+4. **Register message handlers** -- Use `onMessage()` in the service worker and `sendMessage()` from popup/content scripts.
+5. **Configure storage** -- Import `storage` or `syncStorage` from `src/lib/storage.ts` for type-safe key-value persistence.
+
+## Built-in Utilities
+
+### Message Passing
 
 ```typescript
-import { storage } from './lib/storage';
-
-// Type-safe get/set
-await storage.set('theme', 'dark');
-const theme = await storage.get<string>('theme', 'light');
-
-// Sync storage
-import { syncStorage } from './lib/storage';
-await syncStorage.set('settings', { notifications: true });
-```
-
-## 💬 Message Passing
-
-```typescript
-// In background service worker
-import { onMessage, initMessageListener } from './lib/messaging';
-
+// background/index.ts
+import { initMessageListener, onMessage } from '../lib/messaging';
 initMessageListener();
 onMessage('GET_DATA', async (payload) => {
-  return { items: await fetchItems() };
+  return { items: ['a', 'b'] };
 });
 
-// In popup or content script
-import { sendMessage } from './lib/messaging';
+// popup or content script
+import { sendMessage } from '../lib/messaging';
 const response = await sendMessage('GET_DATA');
 ```
 
-## 📦 Extensions Built With This Template
+### Storage
 
-These production extensions were built using this boilerplate:
+```typescript
+import { storage, syncStorage } from '../lib/storage';
 
-- 🔄 [Tab Suspender Pro](https://chrome.google.com/webstore/detail/tab-suspender-pro) — Save memory by suspending inactive tabs
-- 📋 [JSON Formatter Pro](https://chrome.google.com/webstore/detail/json-formatter-pro) — Format, validate & beautify JSON
-- 🍪 [Cookie Manager Pro](https://chrome.google.com/webstore/detail/cookie-manager-pro) — View, edit & manage cookies
-- 📝 [Text Expander Pro](https://chrome.google.com/webstore/detail/text-expander-pro) — Smart text expansion
-- 📎 [Clipboard History Pro](https://chrome.google.com/webstore/detail/clipboard-history-pro) — Never lose copied text
+await storage.set('theme', 'dark');
+const theme = await storage.get<string>('theme', 'light');
+await syncStorage.set('settings', { notifications: true });
+```
 
-## 🔗 Related Tools
+## Related
 
-- [chrome-storage-plus](https://github.com/theluckystrike/chrome-storage-plus) — Enhanced Chrome storage wrapper
-- [mv3-migrate](https://github.com/theluckystrike/mv3-migrate) — Migrate MV2 extensions to MV3
-- [tab-manager-api](https://github.com/theluckystrike/tab-manager-api) — Chrome tabs API wrapper
-- [json-toolkit-cli](https://github.com/theluckystrike/json-toolkit-cli) — JSON CLI toolkit
+- [crx-permission-analyzer](https://github.com/theluckystrike/crx-permission-analyzer) -- Analyze Chrome extension permissions
+- [crx-manifest-validator](https://github.com/theluckystrike/crx-manifest-validator) -- Validate manifest.json files
+- [crx-extension-size-analyzer](https://github.com/theluckystrike/crx-extension-size-analyzer) -- Analyze extension bundle size
 
-## 📄 License
+## License
 
-MIT — [Zovo](https://zovo.one)
+MIT -- [Zovo](https://zovo.one)
