@@ -198,11 +198,18 @@ MIT
 
 ## See Also
 
+### Related Zovo Repositories
+
 - [chrome-extension-cli](https://github.com/theluckystrike/chrome-extension-cli) - The CLI for your next Chrome Extension
 - [chrome-extension-publisher](https://github.com/theluckystrike/chrome-extension-publisher) - CLI tool to publish Chrome extensions
 - [awesome-chrome-extensions-dev](https://github.com/theluckystrike/awesome-chrome-extensions-dev) - Awesome list of tools for Chrome extension development
 
-## Contributing
+### Zovo Chrome Extensions
+
+- [Zovo Tab Manager](https://chrome.google.com/webstore/detail/zovo-tab-manager) - Manage tabs efficiently
+- [Zovo Focus](https://chrome.google.com/webstore/detail/zovo-focus) - Block distractions
+
+Visit [zovo.one](https://zovo.one) for more information.
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
