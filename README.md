@@ -1,8 +1,15 @@
 # chrome-extension-starter-mv3
 
+[![npm version](https://img.shields.io/npm/v/chrome-extension-starter-mv3)](https://npmjs.com/package/chrome-extension-starter-mv3)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
+[![Discord](https://img.shields.io/badge/Discord-Zovo-blueviolet.svg?logo=discord)](https://discord.gg/zovo)
+[![Website](https://img.shields.io/badge/Website-zovo.one-blue)](https://zovo.one)
+[![GitHub Stars](https://img.shields.io/github/stars/theluckystrike/chrome-extension-starter-mv3?style=social)](https://github.com/theluckystrike/chrome-extension-starter-mv3)
+
 > Production-ready Chrome Extension starter template with TypeScript, React 18, Tailwind CSS, Webpack 5, and Manifest V3.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+Part of the [Zovo](https://zovo.one) developer tools family.
 
 ## Features
 
@@ -188,3 +195,23 @@ Pre-configured exports: `storage` (local) and `syncStorage` (sync).
 ## License
 
 MIT
+
+## See Also
+
+- [chrome-extension-cli](https://github.com/theluckystrike/chrome-extension-cli) - The CLI for your next Chrome Extension
+- [chrome-extension-publisher](https://github.com/theluckystrike/chrome-extension-publisher) - CLI tool to publish Chrome extensions
+- [awesome-chrome-extensions-dev](https://github.com/theluckystrike/awesome-chrome-extensions-dev) - Awesome list of tools for Chrome extension development
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+Built by [Zovo](https://zovo.one)
