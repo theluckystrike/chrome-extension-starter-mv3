@@ -124,7 +124,135 @@ const shadow = injectShadowUI(
 ```
 
 
-BUILDING AND LOADING THE EXTENSION
+
+## API REFERENCE
+
+### Messaging (`src/lib/messaging.ts`)
+
+The messaging system provides type-safe communication between extension contexts.
+
+#### Initialization
+
+```typescript
+import { initMessageListener } from '../lib/messaging';
+
+// Call once in your background script or content script
+initMessageListener();
+```
+
+#### Registering Message Handlers
+
+```typescript
+import { onMessage } from '../lib/messaging';
+
+// In background script - handle messages from popup or content scripts
+onMessage('GET_TAB_INFO', async (payload, sender) => {
+    return { tabId: sender.tab?.id, url: sender.tab?.url };
+});
+```
+
+#### Sending Messages
+
+```typescript
+import { sendMessage, sendTabMessage } from '../lib/messaging';
+
+// From popup or content script to background
+const response = await sendMessage<{ tabId: number, url: string }>('GET_TAB_INFO');
+
+// Send to a specific tab's content script
+const tabResponse = await sendTabMessage(tabId, 'GET_PAGE_DATA');
+```
+
+#### Message Types
+
+```typescript
+interface Message<T = unknown> {
+    type: string;
+    payload?: T;
+}
+
+interface MessageResponse<T = unknown> {
+    success: boolean;
+    data?: T;
+    error?: string;
+}
+```
+
+### Storage (`src/lib/storage.ts`)
+
+The Storage class wraps `chrome.storage` with typed get and set methods.
+
+```typescript
+import { storage, syncStorage } from '../lib/storage';
+
+// Local storage (default)
+await storage.set('theme', 'dark');
+const theme = await storage.get<string>('theme', 'light');
+
+// Sync storage (synced across user's devices)
+await syncStorage.set('preferences', { notifications: true });
+const prefs = await syncStorage.get<{ notifications: boolean }>('preferences');
+
+// Create custom storage instance
+import { Storage } from '../lib/storage';
+const sessionStore = new Storage('session');
+```
+
+#### Storage Methods
+
+| Method | Description |
+|--------|-------------|
+| `get<T>(key, defaultValue?)` | Get a value from storage |
+| `set<T>(key, value)` | Set a value in storage |
+| `remove(key)` | Remove a key from storage |
+| `clear()` | Clear all keys from storage |
+| `getAll()` | Get all keys and values |
+
+### Content Script Injection (`src/content/index.ts`)
+
+The content script provides Shadow DOM injection for isolated UI.
+
+```typescript
+import { injectShadowUI } from '../content/index';
+
+// Create isolated UI element
+const shadow = injectShadowUI(
+    '<div class="widget">Hello World</div>',
+    `.widget {
+        padding: 16px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }`
+);
+
+// shadow.root contains the ShadowDOM root
+```
+
+### Types (`src/lib/types.ts`)
+
+Shared TypeScript interfaces for common extension patterns.
+
+```typescript
+import type { ExtensionConfig, TabInfo, PageInfo, StorageSchema } from '../lib/types';
+
+// Extension configuration
+const config: ExtensionConfig = {
+    name: 'My Extension',
+    version: '1.0.0',
+    storageArea: 'local'
+};
+
+// Tab information
+const tab: TabInfo = {
+    tabId: 123,
+    url: 'https://example.com',
+    title: 'Example'
+};
+```
+
+
+## BUILDING AND LOADING THE EXTENSION
 
 1. Run npm run build to create a production build in the dist/ folder
 2. Open chrome://extensions in your browser
