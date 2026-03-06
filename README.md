@@ -1,47 +1,37 @@
-# chrome-extension-starter-mv3
+# Chrome Extension Starter MV3
 
-[![npm version](https://img.shields.io/npm/v/chrome-extension-starter-mv3)](https://npmjs.com/package/chrome-extension-starter-mv3)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
-[![Discord](https://img.shields.io/badge/Discord-Zovo-blueviolet.svg?logo=discord)](https://discord.gg/zovo)
-[![Website](https://img.shields.io/badge/Website-zovo.one-blue)](https://zovo.one)
-[![GitHub Stars](https://img.shields.io/github/stars/theluckystrike/chrome-extension-starter-mv3?style=social)](https://github.com/theluckystrike/chrome-extension-starter-mv3)
+A clean, production-ready starter template for building Chrome extensions with Manifest V3, TypeScript, React 18, Tailwind CSS, and Webpack 5.
 
-> Production-ready Chrome Extension starter template with TypeScript, React 18, Tailwind CSS, Webpack 5, and Manifest V3.
+Clone it, install, and start building. Everything is wired up and ready to go.
 
-Part of the [Zovo](https://zovo.one) developer tools family.
 
-## Features
+WHAT IS INCLUDED
 
-- **TypeScript** -- Full type safety with strict mode enabled
-- **React 18** -- Modern UI for popup and options pages
-- **Tailwind CSS** -- Utility-first styling with PostCSS and Autoprefixer
-- **Webpack 5** -- Development watch mode and optimized production builds
-- **Manifest V3** -- Service worker background script, modern Chrome APIs
-- **Type-Safe Messaging** -- Built-in `sendMessage`, `sendTabMessage`, and `onMessage` utilities with generics
-- **Storage Wrapper** -- `Storage` class supporting `local`, `sync`, and `session` areas with typed get/set
-- **Shadow DOM Injection** -- Isolated content script UI via `injectShadowUI`
-- **Jest Testing** -- Pre-configured with `ts-jest` and `jsdom` environment
-- **ESLint + Prettier** -- Code quality and formatting out of the box
-- **GitHub Actions CI** -- Automated type-checking and tests on Node 18 and 20
+- Manifest V3 service worker background script with lifecycle hooks
+- Content script with Shadow DOM injection for isolated page UI
+- Type-safe message passing between background, popup, and content scripts
+- Typed chrome.storage wrapper supporting local, sync, and session areas
+- React 18 with JSX support for popup and options pages
+- Tailwind CSS with PostCSS and Autoprefixer
+- Webpack 5 with dev watch mode and optimized production builds
+- Jest testing pre-configured with ts-jest and jsdom
+- ESLint and Prettier for consistent code style
+- GitHub Actions CI running type checks and tests on Node 18 and 20
+- TypeScript in strict mode throughout
 
-## Quick Start
+
+QUICK START
 
 ```bash
-# Clone the template
 git clone https://github.com/theluckystrike/chrome-extension-starter-mv3.git my-extension
 cd my-extension
-
-# Install dependencies
 npm install
-
-# Start development (builds + watches for changes)
 npm run dev
 ```
 
-Load in Chrome: open `chrome://extensions`, enable **Developer Mode**, click **Load unpacked**, and select the `dist/` folder.
+Then open chrome://extensions, turn on Developer Mode, click Load unpacked, and select the dist/ folder.
 
-### Use as a GitHub Template
+You can also use the GitHub template feature directly:
 
 ```bash
 gh repo create my-extension --template theluckystrike/chrome-extension-starter-mv3
@@ -49,52 +39,47 @@ cd my-extension
 npm install
 ```
 
-## Project Structure
+
+PROJECT STRUCTURE
 
 ```
 src/
-  background/index.ts     Service worker -- MV3 entry point, message handlers
-  content/index.ts        Content script -- injected into pages, Shadow DOM UI
+  background/index.ts      Service worker entry point, message handlers, lifecycle events
+  content/index.ts          Content script injected into pages, Shadow DOM UI helper
   lib/
-    messaging.ts          Type-safe message passing between contexts
-    storage.ts            chrome.storage wrapper (local, sync, session)
-    types.ts              Shared TypeScript interfaces
+    messaging.ts            Type-safe message passing between extension contexts
+    storage.ts              chrome.storage wrapper with local, sync, and session support
+    types.ts                Shared TypeScript interfaces
 ```
 
-## Build Commands
 
-| Command                  | Description                                 |
-| ------------------------ | ------------------------------------------- |
-| `npm run dev`            | Build in watch mode for development         |
-| `npm run build`          | Production build                            |
-| `npm run package`        | Production build + zip for Chrome Web Store |
-| `npm test`               | Run Jest tests                              |
-| `npm run test:watch`     | Run tests in watch mode                     |
-| `npm run test:coverage`  | Run tests with coverage report              |
-| `npm run lint`           | Run ESLint on all `.ts` and `.tsx` files    |
-| `npm run lint:fix`       | Run ESLint with auto-fix                    |
-| `npm run format`         | Format source files with Prettier           |
-| `npm run type-check`     | Run TypeScript type checking (`tsc --noEmit`) |
+AVAILABLE SCRIPTS
 
-## Usage
+```
+npm run dev              Build and watch for changes during development
+npm run build            Production build
+npm run package          Production build and zip for Chrome Web Store upload
+npm test                 Run Jest tests
+npm run test:watch       Run tests in watch mode
+npm run test:coverage    Run tests with coverage report
+npm run lint             Lint all .ts and .tsx files
+npm run lint:fix         Lint with auto-fix
+npm run format           Format source files with Prettier
+npm run type-check       Run TypeScript type checking without emitting
+```
 
-### Message Passing
 
-Register handlers in the background service worker and send messages from popup or content scripts.
+HOW TO USE THE TEMPLATE
+
+Message passing
+
+Register handlers in the background service worker and send messages from any other context.
 
 ```typescript
 // background/index.ts
 import { initMessageListener, onMessage } from '../lib/messaging';
 
 initMessageListener();
-
-onMessage('GET_TAB_INFO', async (_payload, sender) => {
-  return {
-    tabId: sender.tab?.id,
-    url: sender.tab?.url,
-    title: sender.tab?.title,
-  };
-});
 
 onMessage('PING', async () => {
   return { status: 'alive', timestamp: Date.now() };
@@ -106,42 +91,30 @@ onMessage('PING', async () => {
 import { sendMessage } from '../lib/messaging';
 
 const response = await sendMessage('PING');
-// response: { success: true, data: { status: 'alive', timestamp: ... } }
 ```
 
-```typescript
-// Send a message to a specific tab's content script
-import { sendTabMessage } from '../lib/messaging';
+You can also send messages directly to a tab's content script using sendTabMessage.
 
-const response = await sendTabMessage(tabId, 'GET_PAGE_INFO');
-// response: { success: true, data: { title: '...', url: '...', description: '...' } }
-```
+Storage
 
-### Storage
+The Storage class wraps chrome.storage with typed get and set methods.
 
 ```typescript
 import { storage, syncStorage } from '../lib/storage';
 
-// Local storage
 await storage.set('theme', 'dark');
-const theme = await storage.get<string>('theme', 'light'); // 'dark'
-await storage.remove('theme');
+const theme = await storage.get<string>('theme', 'light');
 
-// Sync storage (syncs across devices)
 await syncStorage.set('settings', { notifications: true });
-const all = await syncStorage.getAll();
-
-// Create a session-scoped storage instance
-import { Storage } from '../lib/storage';
-const sessionStorage = new Storage('session');
-await sessionStorage.set('tempData', { foo: 'bar' });
-await sessionStorage.clear();
 ```
 
-### Shadow DOM Content Script UI
+You can create instances for any storage area by passing 'local', 'sync', or 'session' to the constructor.
+
+Shadow DOM injection
+
+The content script exports an injectShadowUI function that creates a closed Shadow DOM element on the page. This keeps your extension UI completely isolated from the host page styles.
 
 ```typescript
-// content/index.ts
 import { injectShadowUI } from '../content/index';
 
 const shadow = injectShadowUI(
@@ -150,75 +123,37 @@ const shadow = injectShadowUI(
 );
 ```
 
-## API
 
-### Messaging (`src/lib/messaging.ts`)
+BUILDING AND LOADING THE EXTENSION
 
-| Function | Signature | Description |
-| --- | --- | --- |
-| `initMessageListener` | `() => void` | Initialize the `chrome.runtime.onMessage` listener. Call once per context. |
-| `onMessage` | `<TPayload, TResponse>(type: string, handler: (payload: TPayload, sender: MessageSender) => Promise<TResponse> \| TResponse) => void` | Register a handler for a message type. |
-| `sendMessage` | `<TResponse, TPayload>(type: string, payload?: TPayload) => Promise<MessageResponse<TResponse>>` | Send a message to the background service worker. |
-| `sendTabMessage` | `<TResponse, TPayload>(tabId: number, type: string, payload?: TPayload) => Promise<MessageResponse<TResponse>>` | Send a message to a specific tab's content script. |
+1. Run npm run build to create a production build in the dist/ folder
+2. Open chrome://extensions in your browser
+3. Enable Developer Mode using the toggle in the top right
+4. Click Load unpacked and select the dist/ folder
+5. The extension is now active
 
-### Storage (`src/lib/storage.ts`)
+To package for the Chrome Web Store, run npm run package. This creates an extension.zip file in the project root.
 
-**`Storage` class** -- construct with `'local'`, `'sync'`, or `'session'`.
 
-| Method | Signature | Description |
-| --- | --- | --- |
-| `get` | `<T>(key: string, defaultValue?: T) => Promise<T \| undefined>` | Get a value by key with optional default. |
-| `set` | `<T>(key: string, value: T) => Promise<void>` | Set a value by key. |
-| `remove` | `(key: string \| string[]) => Promise<void>` | Remove one or more keys. |
-| `clear` | `() => Promise<void>` | Clear all data in the storage area. |
-| `getAll` | `() => Promise<Record<string, unknown>>` | Get all key-value pairs. |
+TECH STACK
 
-Pre-configured exports: `storage` (local) and `syncStorage` (sync).
+- TypeScript 5.x with strict mode
+- React 18
+- Tailwind CSS 3.x
+- Webpack 5
+- Jest 29
+- ESLint 8 with TypeScript plugin
+- Prettier 3
+- GitHub Actions for CI
 
-### Content Script (`src/content/index.ts`)
 
-| Function | Signature | Description |
-| --- | --- | --- |
-| `injectShadowUI` | `(html: string, css: string) => ShadowRoot` | Inject an isolated UI into the page using a closed Shadow DOM. |
+LICENSE
 
-### Types (`src/lib/types.ts`)
+MIT. See the LICENSE file for details.
 
-| Interface | Fields |
-| --- | --- |
-| `ExtensionConfig` | `name: string`, `version: string`, `storageArea: 'local' \| 'sync' \| 'session'` |
-| `TabInfo` | `tabId?: number`, `url?: string`, `title?: string` |
-| `PageInfo` | `title: string`, `url: string`, `description: string` |
-| `StorageSchema` | `settings: Record<string, unknown>`, `data: Record<string, unknown>` |
-| `Message<T>` | `type: string`, `payload?: T` |
-| `MessageResponse<T>` | `success: boolean`, `data?: T`, `error?: string` |
 
-## License
+ABOUT
 
-MIT
+Built and maintained by theluckystrike. This starter template is part of the Chrome extension tooling from zovo.one, a studio focused on building practical browser extensions and developer tools.
 
-## See Also
-
-### Related Zovo Repositories
-
-- [chrome-extension-cli](https://github.com/theluckystrike/chrome-extension-cli) - The CLI for your next Chrome Extension
-- [chrome-extension-publisher](https://github.com/theluckystrike/chrome-extension-publisher) - CLI tool to publish Chrome extensions
-- [awesome-chrome-extensions-dev](https://github.com/theluckystrike/awesome-chrome-extensions-dev) - Awesome list of tools for Chrome extension development
-
-### Zovo Chrome Extensions
-
-- [Zovo Tab Manager](https://chrome.google.com/webstore/detail/zovo-tab-manager) - Manage tabs efficiently
-- [Zovo Focus](https://chrome.google.com/webstore/detail/zovo-focus) - Block distractions
-
-Visit [zovo.one](https://zovo.one) for more information.
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-Built by [Zovo](https://zovo.one)
+https://github.com/theluckystrike/chrome-extension-starter-mv3
